@@ -113,9 +113,9 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 		    JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
 		    
 		    toBeRendered = "h4. Plugin Information\n";
-		    toBeRendered += "|| Plugin ID | " + getString(pluginJSON, "name") + "\n";
-		    toBeRendered += "|| Latest Release | " + getString(pluginJSON, "version") + "\n";
-		    toBeRendered += "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ "\n";
+		    toBeRendered += "|| Plugin ID | " + getString(pluginJSON, "name") + " |\n";
+		    toBeRendered += "|| Latest Release | " + getString(pluginJSON, "version") + " |\n";
+		    toBeRendered += "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ " |\n";
 		    toBeRendered += "|| Maintainer(s) | ";
 
 		    StringBuilder devString = new StringBuilder();
@@ -147,6 +147,8 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 		    }
 
 		    toBeRendered += devString.toString() + " |\n";
+                    
+                    toBeRendered += "|| Issue Tracking | [Open Issues|https://hudson.dev.java.net/issues/buglist.cgi?component=hudson&issue_status=NEW&issue_status=STARTED&issue_status=REOPENED&subcomponent=" + getString(pluginJSON, "name") + "] |\n";
 		}
 	    }
 
