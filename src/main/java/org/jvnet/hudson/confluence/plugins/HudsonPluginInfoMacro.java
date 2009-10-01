@@ -11,9 +11,9 @@ import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
 import com.atlassian.confluence.util.http.HttpResponse;
 import com.atlassian.confluence.util.http.HttpRetrievalService;
-import com.atlassian.confluence.json.JSONArray;
-import com.atlassian.confluence.json.JSONObject;
-import com.atlassian.confluence.json.JSONException;
+import com.atlassian.confluence.json.parser.JSONObject;
+import com.atlassian.confluence.json.parser.JSONException;
+import com.atlassian.confluence.json.parser.JSONArray;
 
 import org.apache.commons.io.IOUtils;
 

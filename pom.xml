@@ -1,13 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <!-- note - the parent being version 10 means this *won't* work with Confluence 2.10 and later,
-       due to the Confluence JSON classes being moved around. Change the parent version to 23
-       and references to "com.atlassian.confluence.json.*" to "com.atlassian.confluence.json.parser.*"
-       in HudsonPluginInfoMacro.java to work with Confluence 2.10 and later.
-   -->
   <parent>
     <groupId>com.atlassian.confluence.plugin.base</groupId>
     <artifactId>confluence-plugin-base</artifactId>
-    <version>10</version>
+    <version>23</version>
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
@@ -28,20 +23,20 @@
       <version>1.4.1</version>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-compiler-plugin</artifactId>
-	<configuration>
-	  <source>1.5</source>
-	  <target>1.5</target>
-	</configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
-  
+
   <repositories>
     <repository>
       <id>jboss</id>
@@ -53,12 +48,12 @@
       <id>atlassian-public</id>
       <url>https://maven.atlassian.com/repository/public</url>
       <snapshots>
-	<enabled>true</enabled>
+        <enabled>true</enabled>
       </snapshots>
       <releases>
-	<enabled>true</enabled>
+        <enabled>true</enabled>
       </releases>
-    </repository>   
+    </repository>
     <repository>
       <id>atlassian-m1-repository</id>
       <url>https://maven.atlassian.com/maven1</url>
@@ -70,10 +65,10 @@
       <id>atlassian-public</id>
       <url>https://maven.atlassian.com/repository/public</url>
       <snapshots>
-	<enabled>true</enabled>
+        <enabled>true</enabled>
       </snapshots>
       <releases>
-	<enabled>true</enabled>
+        <enabled>true</enabled>
       </releases>
     </pluginRepository>
   </pluginRepositories>
