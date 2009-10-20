@@ -85,7 +85,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 	}
 
 	try {
-	    HttpResponse response = httpRetrievalService.get("http://hudson.dev.java.net/update-center.json");
+	    HttpResponse response = httpRetrievalService.get("http://hudson-ci.orgt/update-center.json");
             if (response.getStatusCode() != 200) {
                 return subRenderer.render("h4. Plugin Information\n"
 					  + "{warning:title=Cannot Load Update Center}\n"
