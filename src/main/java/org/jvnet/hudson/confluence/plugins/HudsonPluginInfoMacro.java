@@ -117,7 +117,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 		    toBeRendered += "|| Latest Release | " + getString(pluginJSON, "version") + " |\n";
 		    toBeRendered += "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ " |\n";
 		    toBeRendered += "|| Changes in Latest Release | "
-			+ "[via Fisheye|http://fisheye4.atlassian.com/search/hudson/trunk/plugins/"
+			+ "[via Fisheye|http://fisheye4.atlassian.com/search/hudson/trunk/hudson/plugins/"
 			+ getString(pluginJSON, "name")
 			+ "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
 			+ getString(pluginJSON, "name")
