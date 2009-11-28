@@ -158,7 +158,9 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 
 		    toBeRendered += devString.toString() + " |\n";
                     
-                    toBeRendered += "|| Issue Tracking | [Open Issues|https://hudson.dev.java.net/issues/buglist.cgi?component=hudson&issue_status=NEW&issue_status=STARTED&issue_status=REOPENED&subcomponent=" + getString(pluginJSON, "name") + "] |\n";
+                    toBeRendered += "|| Issue Tracking | [Open Issues|"
+                        + "http://issues.hudson-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+HUDSON+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+"
+                        + getString(pluginJSON, "name") + "] |\n";
 		}
 	    }
 
