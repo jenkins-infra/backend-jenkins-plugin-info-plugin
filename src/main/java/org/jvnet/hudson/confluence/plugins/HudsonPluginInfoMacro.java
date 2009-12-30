@@ -107,16 +107,16 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 	    
 	    updateCenter = new JSONObject(rawUpdateCenter);
 	    
-	    String toBeRendered = "";
+	    StringBuilder toBeRendered = null;
 	    for (String pluginKey : JSONObject.getNames(updateCenter.getJSONObject("plugins"))) {
 		if (pluginKey.equals(pluginId)) {
 		    JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
 		    
-		    toBeRendered = "h4. Plugin Information\n";
-		    toBeRendered += "|| Plugin ID | " + getString(pluginJSON, "name") + " |\n";
-		    toBeRendered += "|| Latest Release | " + getString(pluginJSON, "version") + " |\n";
-		    toBeRendered += "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ " |\n";
-		    toBeRendered += "|| Changes in Latest Release | "
+		    toBeRendered = new StringBuilder("h4. Plugin Information\n"
+			+ "|| Plugin ID | " + getString(pluginJSON, "name") + " |\n"
+			+ "|| Latest Release | " + getString(pluginJSON, "version") + " |\n"
+			+ "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ " |\n"
+			+ "|| Changes in Latest Release | "
 			+ "[via Fisheye|http://fisheye4.atlassian.com/search/hudson/trunk/hudson/plugins/"
 			+ getString(pluginJSON, "name")
 			+ "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
@@ -125,11 +125,10 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 			+ getString(pluginJSON, "previousTimestamp")
 			+ "%20and%20date%20<%20"
 			+ getString(pluginJSON, "releaseTimestamp")
-			+ "%20group%20by%20changeset] |\n";
-		    toBeRendered += "|| Maintainer(s) | ";
+			+ "%20group%20by%20changeset] |\n"
+			+ "|| Maintainer(s) | ";
 
 		    StringBuilder devString = new StringBuilder();
-		    
 		    if (pluginJSON.has("developers")) {
 			JSONArray devArray = pluginJSON.getJSONArray("developers");
 			for (int i = 0; i < devArray.length(); i++) {
@@ -148,7 +147,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 				devString.append(devName);
 			    }
 
-			    devString.append(" (java.net id: " + devId + ")");
+			    devString.append(" (id: " + devId + ")");
 			}
 		    }
 
@@ -156,20 +155,20 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 			devString.append("(not specified)");
 		    }
 
-		    toBeRendered += devString.toString() + " |\n";
+		    toBeRendered.append(devString.toString()).append(" |\n");
                     
-                    toBeRendered += "|| Issue Tracking | [Open Issues|"
-                        + "http://issues.hudson-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+HUDSON+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'"
-                        + getString(pluginJSON, "name") + "'] |\n";
+                    toBeRendered.append("|| Issue Tracking | [Open Issues|"
+                        + "http://issues.hudson-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+HUDSON+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
+                        .append(getString(pluginJSON, "name")).append("'] |\n");
 		}
 	    }
 
-	    if (toBeRendered.equals("")) {
-		toBeRendered = "h4. Plugin Information\n";
-		toBeRendered += "|| No Information For This Plugin ||\n";
+	    if (toBeRendered==null) {
+		toBeRendered = new StringBuilder("h4. Plugin Information\n");
+		toBeRendered.append("|| No Information For This Plugin ||\n");
 	    }
 
-	    return subRenderer.render(toBeRendered, renderContext);
+	    return subRenderer.render(toBeRendered.toString(), renderContext);
 	}
 	catch (JSONException e) {
 	    return subRenderer.render("h4. Plugin Information\n"
