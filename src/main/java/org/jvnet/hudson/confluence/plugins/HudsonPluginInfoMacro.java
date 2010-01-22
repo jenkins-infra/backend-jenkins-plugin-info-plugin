@@ -112,21 +112,20 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 		if (pluginKey.equals(pluginId)) {
 		    JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
 		    
+		    String name = getString(pluginJSON, "name");
 		    toBeRendered = new StringBuilder("h4. Plugin Information\n"
-			+ "|| Plugin ID | " + getString(pluginJSON, "name") + " |\n"
+			+ "|| Plugin ID | " + name + " |\n"
 			+ "|| Latest Release | " + getString(pluginJSON, "version") + " |\n"
-			+ "|| Latest Release Date | " + getString(pluginJSON, "buildDate")+ " |\n"
-			+ "|| Changes in Latest Release | "
-			+ "[via Fisheye|http://fisheye4.atlassian.com/search/hudson/trunk/hudson/plugins/"
-			+ getString(pluginJSON, "name")
-			+ "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
-			+ getString(pluginJSON, "name")
-			+ "%20where%20date%20>%20"
+			+ "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
+			+ "|| Changes in Latest Release | [via Fisheye|"
+			+ "http://fisheye.hudson-ci.org/search/hudson/trunk/hudson/plugins/"
+			+ name + "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
+			+ name + "%20where%20date%20>%20"
 			+ getString(pluginJSON, "previousTimestamp")
 			+ "%20and%20date%20<%20"
 			+ getString(pluginJSON, "releaseTimestamp")
 			+ "%20group%20by%20changeset] |\n"
-			+ "|| Maintainer(s) | ";
+			+ "|| Maintainer(s) | ");
 
 		    StringBuilder devString = new StringBuilder();
 		    if (pluginJSON.has("developers")) {
@@ -159,7 +158,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
                     
                     toBeRendered.append("|| Issue Tracking | [Open Issues|"
                         + "http://issues.hudson-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+HUDSON+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
-                        .append(getString(pluginJSON, "name")).append("'] |\n");
+                        .append(name).append("'] |\n");
 		}
 	    }
 
