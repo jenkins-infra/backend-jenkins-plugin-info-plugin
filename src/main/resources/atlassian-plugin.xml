@@ -1,11 +1,14 @@
-<atlassian-plugin key="org.jvnet.hudson.confluence.plugins.hudson-plugin-info-plugin" name="hudson-plugin-info-plugin">
+<atlassian-plugin key="org.jvnet.hudson.confluence.plugins.hudson-plugin-info-plugin"
+                  name="hudson-plugin-info-plugin">
     <plugin-info>
         <description>Hudson Plugin Info Macro Plugin</description>
-        <version>1.0</version>
+        <version>1.1</version>
+        <vendor name="Hudson" url="http://hudson-ci.org/"/>
     </plugin-info>
 
-    <macro name='hudson-plugin-info' class='org.jvnet.hudson.confluence.plugins.HudsonPluginInfoMacro'
-	   key='hudson-plugin-info'>
+    <macro name="hudson-plugin-info"
+           class="org.jvnet.hudson.confluence.plugins.HudsonPluginInfoMacro"
+           key="hudson-plugin-info">
         <description>Inserts an infobox with information on a given Hudson plugin.</description>
     </macro>
 </atlassian-plugin>
