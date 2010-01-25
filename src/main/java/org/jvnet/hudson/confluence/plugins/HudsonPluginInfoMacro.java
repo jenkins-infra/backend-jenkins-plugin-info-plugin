@@ -74,10 +74,10 @@ public class HudsonPluginInfoMacro extends BaseMacro {
      * 
      */
     public String execute(Map parameters, String body, RenderContext renderContext) throws MacroException {
-	String pluginId = (String) parameters.get(0);
+	String pluginId = (String)parameters.get("pluginId");
 	
 	if (pluginId == null) {
-	    pluginId = (String) parameters.get("pluginId");
+	    pluginId = (String)parameters.get("0");
 	}
 	
 	if (pluginId == null) { 
@@ -112,20 +112,24 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 		if (pluginKey.equals(pluginId)) {
 		    JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
 		    
-		    String name = getString(pluginJSON, "name");
+		    String name = getString(pluginJSON, "name"),
+			   releaseTimestamp = getString(pluginJSON, "releaseTimestamp"),
+			   fisheyeBaseUrl = "http://fisheye.hudson-ci.org/search/hudson"
+				+ "/trunk/hudson/plugins/" + name
+				+ "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
+				+ name + "%20where%20date%20>%20",
+			   fisheyeEndUrl = "%20group%20by%20changeset"
+				+ "%20return%20csid,%20comment,%20author,%20path";
 		    toBeRendered = new StringBuilder("h4. Plugin Information\n"
 			+ "|| Plugin ID | " + name + " |\n"
 			+ "|| Latest Release | " + getString(pluginJSON, "version") + " |\n"
 			+ "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
-			+ "|| Changes in Latest Release | [via Fisheye|"
-			+ "http://fisheye.hudson-ci.org/search/hudson/trunk/hudson/plugins/"
-			+ name + "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
-			+ name + "%20where%20date%20>%20"
+			+ "|| Changes via Fisheye | [In Latest Release|" + fisheyeBaseUrl
 			+ getString(pluginJSON, "previousTimestamp")
-			+ "%20and%20date%20<%20"
-			+ getString(pluginJSON, "releaseTimestamp")
-			+ "%20group%20by%20changeset] |\n"
-			+ "|| Maintainer(s) | ");
+			+ "%20and%20date%20<%20" + releaseTimestamp + fisheyeEndUrl
+			+ "]\n[Since Latest Release|" + fisheyeBaseUrl
+			+ releaseTimestamp + fisheyeEndUrl
+			+ "] |\n|| Maintainer(s) | ");
 
 		    StringBuilder devString = new StringBuilder();
 		    if (pluginJSON.has("developers")) {
