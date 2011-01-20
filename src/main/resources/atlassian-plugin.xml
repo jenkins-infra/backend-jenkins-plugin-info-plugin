@@ -2,7 +2,7 @@
                   name="hudson-plugin-info-plugin">
     <plugin-info>
         <description>Hudson Plugin Info Macro Plugin</description>
-        <version>1.2</version>
+        <version>1.3</version>
         <vendor name="Hudson" url="http://hudson-ci.org/"/>
     </plugin-info>
 
