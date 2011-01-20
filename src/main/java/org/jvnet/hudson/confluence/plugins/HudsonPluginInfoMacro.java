@@ -75,18 +75,16 @@ public class HudsonPluginInfoMacro extends BaseMacro {
      */
     public String execute(Map parameters, String body, RenderContext renderContext) throws MacroException {
         String pluginId = (String)parameters.get("pluginId");
-        
         if (pluginId == null) {
-            pluginId = (String)parameters.get("0");
+            pluginId = (String)parameters.get("0"); // Accept pluginId value without "pluginId="
         }
-        
         if (pluginId == null) { 
             return "No plugin specified.";
         }
 
         String jiraComponent = (String) parameters.get("jiraComponent");
-
         String sourceDir = (String) parameters.get("sourceDir");
+        boolean isGithub = "github".equals(parameters.get("src")); // Default to fisheye/svn links
         
         try {
             HttpResponse response = httpRetrievalService.get("http://updates.hudson-labs.org/update-center.json");
@@ -98,18 +96,14 @@ public class HudsonPluginInfoMacro extends BaseMacro {
             }
             
             String rawUpdateCenter = IOUtils.toString(response.getResponse()).trim();
-            
             if (rawUpdateCenter.startsWith("updateCenter.post(")) {
-                rawUpdateCenter = rawUpdateCenter.substring(new String("updateCenter.post(").length());
+                rawUpdateCenter = rawUpdateCenter.substring("updateCenter.post(".length());
             }
-
             if (rawUpdateCenter.endsWith(");")) {
                 rawUpdateCenter = rawUpdateCenter.substring(0,rawUpdateCenter.lastIndexOf(");"));
             }
 
-            JSONObject updateCenter;
-            
-            updateCenter = new JSONObject(rawUpdateCenter);
+            JSONObject updateCenter = new JSONObject(rawUpdateCenter);
             
             StringBuilder toBeRendered = null;
             for (String pluginKey : JSONObject.getNames(updateCenter.getJSONObject("plugins"))) {
@@ -121,29 +115,42 @@ public class HudsonPluginInfoMacro extends BaseMacro {
                     if (jiraComponent == null) {
                         jiraComponent = name;
                     }
-                    
                     if (sourceDir == null) {
-                        sourceDir = name;
+                        sourceDir = name + (isGithub ? "-plugin" : "");
                     }
 
                     String releaseTimestamp = getString(pluginJSON, "releaseTimestamp");
-                    String fisheyeBaseUrl = "http://fisheye.hudson-ci.org/search/hudson"
+                    String fisheyeBaseUrl = "http://fisheye.hudson-labs.org/search/hudson"
                         + "/trunk/hudson/plugins/" + sourceDir
                         + "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
                         + sourceDir + "%20where%20date%20>%20";
                     String fisheyeEndUrl = "%20group%20by%20changeset"
                         + "%20return%20csid,%20comment,%20author,%20path";
+                    String githubBaseUrl = "https://github.com/hudson/" + sourceDir + "/compare/" + name + "-";
+                    String version = getString(pluginJSON, "version");
                     
                     toBeRendered = new StringBuilder("h4. Plugin Information\n"
                                                      + "|| Plugin ID | " + name + " |\n"
-                                                     + "|| Latest Release | " + getString(pluginJSON, "version") + " |\n"
+                                                     + "|| Latest Release | " + version + " |\n"
                                                      + "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
-                                                     + "|| Changes via Fisheye | [In Latest Release|" + fisheyeBaseUrl
+                                                     + "|| Changes | [In Latest Release|");
+                    if (isGithub) {
+                    	// would be better if actual previous version was in JSON, not just previousTimestamp
+                    	// below logic will produce broken links sometimes..
+                    	int i = version.lastIndexOf('.') + 1;
+                    	String prevVer = i <= 0 ? version
+                    			       : version.substring(0, i) + (Integer.parseInt(version.substring(i)) - 1);
+                    	toBeRendered.append(githubBaseUrl + prevVer + "..." + name + "-" + version
+                    								 + "]\n[Since Latest Release|" + githubBaseUrl + version
+                    								 + "...master]");
+                    } else {
+                    	toBeRendered.append(fisheyeBaseUrl
                                                      + getString(pluginJSON, "previousTimestamp")
                                                      + "%20and%20date%20<%20" + releaseTimestamp + fisheyeEndUrl
                                                      + "]\n[Since Latest Release|" + fisheyeBaseUrl
-                                                     + releaseTimestamp + fisheyeEndUrl
-                                                     + "] |\n|| Maintainer(s) | ");
+                                                     + releaseTimestamp + fisheyeEndUrl + "]");
+                    }
+                    toBeRendered.append(" |\n|| Maintainer(s) | ");
 
                     StringBuilder devString = new StringBuilder();
                     if (pluginJSON.has("developers")) {
@@ -202,8 +209,9 @@ public class HudsonPluginInfoMacro extends BaseMacro {
         }
     }
     
-    
+
     private SubRenderer subRenderer;
+
     /**
      * @param subRenderer
      *            The subRenderer to set.
