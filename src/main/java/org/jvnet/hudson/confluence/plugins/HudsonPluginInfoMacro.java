@@ -84,7 +84,6 @@ public class HudsonPluginInfoMacro extends BaseMacro {
 
         String jiraComponent = (String) parameters.get("jiraComponent");
         String sourceDir = (String) parameters.get("sourceDir");
-        boolean isGithub = "github".equals(parameters.get("src")); // Default to fisheye/svn links
         
         try {
             HttpResponse response = httpRetrievalService.get("http://updates.hudson-labs.org/update-center.json");
@@ -115,6 +114,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
                     if (jiraComponent == null) {
                         jiraComponent = name;
                     }
+                    boolean isGithub = getString(pluginJSON, "scm").endsWith("github.com"); // Default to svn
                     if (sourceDir == null) {
                         sourceDir = name + (isGithub ? "-plugin" : "");
                     }
@@ -135,11 +135,7 @@ public class HudsonPluginInfoMacro extends BaseMacro {
                                                      + "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
                                                      + "|| Changes | [In Latest Release|");
                     if (isGithub) {
-                    	// would be better if actual previous version was in JSON, not just previousTimestamp
-                    	// below logic will produce broken links sometimes..
-                    	int i = version.lastIndexOf('.') + 1;
-                    	String prevVer = i <= 0 ? version
-                    			       : version.substring(0, i) + (Integer.parseInt(version.substring(i)) - 1);
+                        String prevVer = getString(pluginJSON, "previousVersion");
                     	toBeRendered.append(githubBaseUrl + prevVer + "..." + name + "-" + version
                     								 + "]\n[Since Latest Release|" + githubBaseUrl + version
                     								 + "...master]");
