@@ -2,7 +2,7 @@
                   name="jenkins-plugin-info-plugin">
     <plugin-info>
         <description>Jenkins Plugin Info Macro Plugin</description>
-        <version>1.4</version>
+        <version>1.5</version>
         <vendor name="Jenkins" url="http://jenkins-ci.org/"/>
     </plugin-info>
 
