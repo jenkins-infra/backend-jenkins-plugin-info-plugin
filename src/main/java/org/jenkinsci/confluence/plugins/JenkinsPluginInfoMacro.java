@@ -86,7 +86,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
         String sourceDir = (String) parameters.get("sourceDir");
         
         try {
-            HttpResponse response = httpRetrievalService.get("http://updates.hudson-labs.org/update-center.json");
+            HttpResponse response = httpRetrievalService.get("http://updates.jenkins-ci.org/update-center.json");
             if (response.getStatusCode() != 200) {
                 return subRenderer.render("h4. Plugin Information\n"
                                           + "{warning:title=Cannot Load Update Center}\n"
@@ -120,13 +120,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
 
                     String releaseTimestamp = getString(pluginJSON, "releaseTimestamp");
-                    String fisheyeBaseUrl = "http://fisheye.hudson-labs.org/search/hudson"
+                    String fisheyeBaseUrl = "http://fisheye.jenkins-ci.org/search/hudson"
                         + "/trunk/hudson/plugins/" + sourceDir
                         + "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
                         + sourceDir + "%20where%20date%20>%20";
                     String fisheyeEndUrl = "%20group%20by%20changeset"
                         + "%20return%20csid,%20comment,%20author,%20path";
-                    String githubBaseUrl = "https://github.com/hudson/" + sourceDir + "/compare/" + name + "-";
+                    String githubBaseUrl = "https://github.com/jenkinsci/" + sourceDir + "/compare/" + name + "-";
                     String version = getString(pluginJSON, "version");
                     
                     toBeRendered = new StringBuilder("h4. Plugin Information\n"
@@ -178,7 +178,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     toBeRendered.append(devString.toString()).append(" |\n");
                     
                     toBeRendered.append("|| Issue Tracking | [Open Issues|"
-                                        + "http://issues.hudson-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+HUDSON+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
+                                        + "http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
                         .append(jiraComponent).append("'] |\n");
                 }
             }
