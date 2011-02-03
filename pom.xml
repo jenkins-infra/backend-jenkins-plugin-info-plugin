@@ -6,11 +6,11 @@
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jvnet.hudson.confluence.plugins</groupId>
-  <artifactId>hudson-plugin-info-plugin</artifactId>
+  <groupId>org.jenkinsci.confluence.plugins</groupId>
+  <artifactId>jenkins-plugin-info-plugin</artifactId>
   <version>1.4-SNAPSHOT</version>
   
-  <name>Hudson Plugin Info Macro Plugin</name>
+  <name>Jenkins Plugin Info Macro Plugin</name>
   <packaging>atlassian-plugin</packaging>
   <url />
   

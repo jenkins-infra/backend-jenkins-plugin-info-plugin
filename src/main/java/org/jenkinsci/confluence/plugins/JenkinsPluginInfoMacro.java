@@ -1,4 +1,4 @@
-package org.jvnet.hudson.confluence.plugins;
+package org.jenkinsci.confluence.plugins;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,7 +17,7 @@ import com.atlassian.confluence.json.parser.JSONArray;
 
 import org.apache.commons.io.IOUtils;
 
-public class HudsonPluginInfoMacro extends BaseMacro {
+public class JenkinsPluginInfoMacro extends BaseMacro {
 
     private HttpRetrievalService httpRetrievalService;
     
