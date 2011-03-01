@@ -120,7 +120,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
 
                     String releaseTimestamp = getString(pluginJSON, "releaseTimestamp");
-                    String fisheyeBaseUrl = "http://fisheye.jenkins-ci.org/search/hudson"
+                    String fisheyeBaseUrl = "http://fisheye.jenkins-ci.org/search/Jenkins"
                         + "/trunk/hudson/plugins/" + sourceDir
                         + "?ql=select%20revisions%20from%20dir%20/trunk/hudson/plugins/"
                         + sourceDir + "%20where%20date%20>%20";
