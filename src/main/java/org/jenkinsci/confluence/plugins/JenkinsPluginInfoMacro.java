@@ -73,6 +73,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
      * @return formatted Content of the specified file (String)
      * 
      */
+    @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"})
     public String execute(Map parameters, String body, RenderContext renderContext) throws MacroException {
         String pluginId = (String)parameters.get("pluginId");
         if (pluginId == null) {
@@ -146,6 +147,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                                      + "]\n[Since Latest Release|" + fisheyeBaseUrl
                                                      + releaseTimestamp + fisheyeEndUrl + "]");
                     }
+                    toBeRendered.append(" |\n|| Source Code | ");
+                    if (isGithub) {
+                    	toBeRendered.append(String.format("[GitHub|%s]","https://github.com/jenkinsci/"+sourceDir));
+                    } else {
+                        toBeRendered.append(String.format("[Subversion|%s]","https://svn.jenkins-ci.org/trunk/hudson/plugins/"+sourceDir));
+                    }
+
                     toBeRendered.append(" |\n|| Maintainer(s) | ");
 
                     StringBuilder devString = new StringBuilder();
