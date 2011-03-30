@@ -73,8 +73,8 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
      * @return formatted Content of the specified file (String)
      * 
      */
-    @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"})
-    public String execute(Map parameters, String body, RenderContext renderContext) throws MacroException {
+    public String execute(Map parameters, String body, RenderContext renderContext)
+            throws MacroException {
         String pluginId = (String)parameters.get("pluginId");
         if (pluginId == null) {
             pluginId = (String)parameters.get("0"); // Accept pluginId value without "pluginId="
@@ -117,7 +117,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
                     boolean isGithub = getString(pluginJSON, "scm").endsWith("github.com"); // Default to svn
                     if (sourceDir == null) {
-                        sourceDir = name + (isGithub ? "-plugin" : "");
+                        sourceDir = name + (isGithub && !name.endsWith("-plugin") ? "-plugin" : "");
                     }
 
                     String releaseTimestamp = getString(pluginJSON, "releaseTimestamp");
@@ -148,11 +148,9 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                                      + releaseTimestamp + fisheyeEndUrl + "]");
                     }
                     toBeRendered.append(" |\n|| Source Code | ");
-                    if (isGithub) {
-                    	toBeRendered.append(String.format("[GitHub|%s]","https://github.com/jenkinsci/"+sourceDir));
-                    } else {
-                        toBeRendered.append(String.format("[Subversion|%s]","https://svn.jenkins-ci.org/trunk/hudson/plugins/"+sourceDir));
-                    }
+                    toBeRendered.append(isGithub
+                        ? String.format("[GitHub|%s%s]", "https://github.com/jenkinsci/", sourceDir)
+                        : String.format("[Subversion|%s%s]", "https://svn.jenkins-ci.org/trunk/hudson/plugins/", sourceDir));
 
                     toBeRendered.append(" |\n|| Maintainer(s) | ");
 
