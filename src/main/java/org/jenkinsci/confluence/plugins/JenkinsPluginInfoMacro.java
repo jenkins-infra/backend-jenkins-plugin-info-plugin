@@ -134,6 +134,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                                      + "|| Plugin ID | " + name + " |\n"
                                                      + "|| Latest Release | " + version + " |\n"
                                                      + "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
+                                                     + "|| Required Core | " + getString(pluginJSON, "requiredCore") + " |\n"
                                                      + "|| Changes | [In Latest Release|");
                     if (isGithub) {
                         String prevVer = getString(pluginJSON, "previousVersion");
