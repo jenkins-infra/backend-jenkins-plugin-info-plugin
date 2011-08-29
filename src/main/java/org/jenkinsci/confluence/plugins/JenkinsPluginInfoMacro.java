@@ -153,13 +153,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                 .append(isGithub ? "[GitHub|https://github.com/jenkinsci/"
                                   : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/")
                                 .append(sourceDir)
-                                .append(" |\n|| Latest Release Date | ")
+                                .append("] |\n|| Latest Release Date | ")
                                 .append(getString(pluginJSON, "buildDate"))
                                 .append(" || Issue Tracking | [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
                                 .append(jiraComponent)
                                 .append("'] |\n|| Required Core | ")
                                 .append(getString(pluginJSON, "requiredCore"))
-                                .append(" |\n|| Maintainer(s) | ");
+                                .append(" || Maintainer(s) | ");
 
                     StringBuilder devString = new StringBuilder();
                     if (pluginJSON.has("developers")) {
