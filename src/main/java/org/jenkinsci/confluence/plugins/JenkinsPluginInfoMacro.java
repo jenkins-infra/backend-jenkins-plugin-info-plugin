@@ -130,30 +130,36 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     String githubBaseUrl = "https://github.com/jenkinsci/" + sourceDir + "/compare/" + name + "-";
                     String version = getString(pluginJSON, "version");
                     
-                    toBeRendered = new StringBuilder("h4. Plugin Information\n"
-                                                     + "|| Plugin ID | " + name + " |\n"
-                                                     + "|| Latest Release | " + version + " |\n"
-                                                     + "|| Latest Release Date | " + getString(pluginJSON, "buildDate") + " |\n"
-                                                     + "|| Required Core | " + getString(pluginJSON, "requiredCore") + " |\n"
-                                                     + "|| Changes | [In Latest Release|");
+                    toBeRendered = new StringBuilder("h4. Plugin Information\n");
+                    toBeRendered.append("|| Plugin ID | ")
+                                .append(name)
+                                .append(" || Changes | [In Latest Release|");
                     if (isGithub) {
                         String prevVer = getString(pluginJSON, "previousVersion");
-                    	toBeRendered.append(githubBaseUrl + prevVer + "..." + name + "-" + version
-                    								 + "]\n[Since Latest Release|" + githubBaseUrl + version
-                    								 + "...master]");
+                    	toBeRendered.append(githubBaseUrl).append(prevVer)
+                                    .append("...").append(name).append('-').append(version)
+                                    .append("]\n[Since Latest Release|").append(githubBaseUrl)
+                                    .append(version).append("...master]");
                     } else {
-                    	toBeRendered.append(fisheyeBaseUrl
-                                                     + getString(pluginJSON, "previousTimestamp")
-                                                     + "%20and%20date%20<%20" + releaseTimestamp + fisheyeEndUrl
-                                                     + "]\n[Since Latest Release|" + fisheyeBaseUrl
-                                                     + releaseTimestamp + fisheyeEndUrl + "]");
+                    	toBeRendered.append(fisheyeBaseUrl)
+                                    .append(getString(pluginJSON, "previousTimestamp"))
+                                    .append("%20and%20date%20<%20").append(releaseTimestamp)
+                                    .append(fisheyeEndUrl)
+                                    .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
+                                    .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
                     }
-                    toBeRendered.append(" |\n|| Source Code | ");
-                    toBeRendered.append(isGithub
-                        ? String.format("[GitHub|%s%s]", "https://github.com/jenkinsci/", sourceDir)
-                        : String.format("[Subversion|%s%s]", "https://svn.jenkins-ci.org/trunk/hudson/plugins/", sourceDir));
-
-                    toBeRendered.append(" |\n|| Maintainer(s) | ");
+                    toBeRendered.append(" |\n|| Latest Release | ").append(version)
+                                .append(" || Source Code | ")
+                                .append(isGithub ? "[GitHub|https://github.com/jenkinsci/"
+                                  : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/")
+                                .append(sourceDir)
+                                .append(" |\n|| Latest Release Date | ")
+                                .append(getString(pluginJSON, "buildDate"))
+                                .append(" || Issue Tracking | [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
+                                .append(jiraComponent)
+                                .append("'] |\n|| Required Core | ")
+                                .append(getString(pluginJSON, "requiredCore"))
+                                .append(" |\n|| Maintainer(s) | ");
 
                     StringBuilder devString = new StringBuilder();
                     if (pluginJSON.has("developers")) {
@@ -183,10 +189,6 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
 
                     toBeRendered.append(devString.toString()).append(" |\n");
-                    
-                    toBeRendered.append("|| Issue Tracking | [Open Issues|"
-                                        + "http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
-                        .append(jiraComponent).append("'] |\n");
                 }
             }
 
