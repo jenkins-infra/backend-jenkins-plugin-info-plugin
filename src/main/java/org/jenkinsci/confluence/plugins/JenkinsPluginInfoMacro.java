@@ -1,8 +1,11 @@
 package org.jenkinsci.confluence.plugins;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.Map.Entry;
 
 import com.atlassian.renderer.RenderContext;
 import com.atlassian.renderer.v2.RenderMode;
@@ -16,6 +19,7 @@ import com.atlassian.confluence.json.parser.JSONException;
 import com.atlassian.confluence.json.parser.JSONArray;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class JenkinsPluginInfoMacro extends BaseMacro {
 
@@ -85,7 +89,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
         String jiraComponent = (String) parameters.get("jiraComponent");
         String sourceDir = (String) parameters.get("sourceDir");
-        
+
         try {
             HttpResponse response = httpRetrievalService.get("http://updates.jenkins-ci.org/update-center.json");
             if (response.getStatusCode() != 200) {
@@ -94,6 +98,8 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                           + "error " + response.getStatusCode() + " loading update-center.json\n"
                                           + "{warning}\n", renderContext);
             }
+
+            
             
             String rawUpdateCenter = IOUtils.toString(response.getResponse()).trim();
             if (rawUpdateCenter.startsWith("updateCenter.post(")) {
@@ -109,6 +115,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             for (String pluginKey : JSONObject.getNames(updateCenter.getJSONObject("plugins"))) {
                 if (pluginKey.equals(pluginId)) {
                     JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
+                    final StatsInfoParser statsParser = getStatsParser(renderContext, pluginId);
                     
                     String name = getString(pluginJSON, "name");
 
@@ -148,18 +155,27 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                     .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
                                     .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
                     }
-                    toBeRendered.append(" |\n|| Latest Release | ").append(version)
-                                .append(" || Source Code | ")
-                                .append(isGithub ? "[GitHub|https://github.com/jenkinsci/"
-                                  : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/")
-                                .append(sourceDir)
-                                .append("] |\n|| Latest Release Date | ")
-                                .append(getString(pluginJSON, "buildDate"))
-                                .append(" || Issue Tracking | [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'")
-                                .append(jiraComponent)
-                                .append("'] |\n|| Required Core | ")
-                                .append(getString(pluginJSON, "requiredCore"))
-                                .append(" || Maintainer(s) | ");
+                    
+                    if(statsParser != null){
+                        toBeRendered.append(" || Installations | ");
+                        final SortedMap<Date, Integer> sortedSeries = statsParser.getSortedSeries();
+
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM");
+                        for (Entry<Date, Integer> serie : sortedSeries.entrySet()) {
+                            toBeRendered.append(df.format(serie.getKey())).append(", ").append(serie.getValue().toString());
+                        }
+                        toBeRendered.append(" |\n ");
+                    }
+                    
+                    toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core | ").append(version)
+                                .append(" \\\\ ").append(getString(pluginJSON, "buildDate")).append(version)
+                                .append(" \\\\ ").append(getString(pluginJSON, "requiredCore"))
+                                
+                                
+                                .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
+                                .append(isGithub ? "[GitHub|https://github.com/jenkinsci/" : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/").append(sourceDir)
+                                .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'").append(jiraComponent)
+                                .append(" \\\\ ");
 
                     StringBuilder devString = new StringBuilder();
                     if (pluginJSON.has("developers")) {
@@ -187,16 +203,17 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     if (devString.length()==0) {
                         devString.append("(not specified)");
                     }
-
-                    toBeRendered.append(devString.toString()).append(" |\n");
+                    String chartUrl = statsParser == null ? "n/a" : statsParser.renderChartUrl(true);
+                    toBeRendered.append(devString.toString()).append(" || Usage | ").append(chartUrl).append(" | ");;
+                    break;
                 }
             }
 
             if (toBeRendered==null) {
                 toBeRendered = new StringBuilder("h4. Plugin Information\n");
                 toBeRendered.append("|| No Information For This Plugin ||\n");
-            }
-
+            } 
+            
             return subRenderer.render(toBeRendered.toString(), renderContext);
         }
         catch (JSONException e) {
@@ -212,6 +229,25 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                       + "IOException: " + e.getMessage() + "\n"
                                       + "{warning}\n", renderContext);
         }
+    }
+
+    private StatsInfoParser getStatsParser(RenderContext renderContext, String pluginId) {
+        try {
+            HttpResponse statsResponse = httpRetrievalService.get("http://xxxxxxxx/stats/" + pluginId + ".stats.json");
+            if (statsResponse.getStatusCode() != 200) {
+                subRenderer.render("h4. Stats\n" + "{warning:title=Cannot load statistics}\n" + "error " + statsResponse.getStatusCode()
+                        + " loading update-center.json\n" + "{warning}\n", renderContext);
+            } else {
+                String rawStats = IOUtils.toString(statsResponse.getResponse()).trim();
+                if (StringUtils.isNotBlank(rawStats)) {
+                    return new StatsInfoParser(pluginId, rawStats);
+                }
+            }
+        } catch (Exception e) {
+            subRenderer.render("h4. Stats\n" + "{warning:title=Cannot load statistics}\n" + "Exception: " + e.getMessage() + "\n"
+                    + "{warning}\n", renderContext);
+        }
+        return null;
     }
     
 
