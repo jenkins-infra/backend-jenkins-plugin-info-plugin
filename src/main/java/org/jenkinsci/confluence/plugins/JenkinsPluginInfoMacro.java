@@ -138,73 +138,83 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     String version = getString(pluginJSON, "version");
                     
                     toBeRendered = new StringBuilder("h4. Plugin Information\n");
-                    toBeRendered.append("|| Plugin ID | ")
-                                .append(name)
-                                .append(" || Changes | [In Latest Release|");
-                    if (isGithub) {
-                        String prevVer = getString(pluginJSON, "previousVersion");
-                    	toBeRendered.append(githubBaseUrl).append(prevVer)
-                                    .append("...").append(name).append('-').append(version)
-                                    .append("]\n[Since Latest Release|").append(githubBaseUrl)
-                                    .append(version).append("...master]");
-                    } else {
-                    	toBeRendered.append(fisheyeBaseUrl)
-                                    .append(getString(pluginJSON, "previousTimestamp"))
-                                    .append("%20and%20date%20<%20").append(releaseTimestamp)
-                                    .append(fisheyeEndUrl)
-                                    .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
-                                    .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
-                    }
-                    
-                    if(statsParser != null){
-                        toBeRendered.append(" || Installations | ");
-                        final SortedMap<Date, Integer> sortedSeries = statsParser.getSortedSeries();
 
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM");
-                        for (Entry<Date, Integer> serie : sortedSeries.entrySet()) {
-                            toBeRendered.append(df.format(serie.getKey())).append(", ").append(serie.getValue().toString());
+                    {// first row
+                        toBeRendered.append("|| Plugin ID | ")
+                                    .append(name)
+                                    .append(" || Changes | [In Latest Release|");
+                        if (isGithub) {
+                            String prevVer = getString(pluginJSON, "previousVersion");
+                            toBeRendered.append(githubBaseUrl).append(prevVer)
+                                        .append("...").append(name).append('-').append(version)
+                                        .append("]\n[Since Latest Release|").append(githubBaseUrl)
+                                        .append(version).append("...master]");
+                        } else {
+                            toBeRendered.append(fisheyeBaseUrl)
+                                        .append(getString(pluginJSON, "previousTimestamp"))
+                                        .append("%20and%20date%20<%20").append(releaseTimestamp)
+                                        .append(fisheyeEndUrl)
+                                        .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
+                                        .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
                         }
                         toBeRendered.append(" |\n ");
                     }
-                    
-                    toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core | ").append(version)
-                                .append(" \\\\ ").append(getString(pluginJSON, "buildDate")).append(version)
-                                .append(" \\\\ ").append(getString(pluginJSON, "requiredCore"))
-                                
-                                
-                                .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
-                                .append(isGithub ? "[GitHub|https://github.com/jenkinsci/" : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/").append(sourceDir).append(']')
-                                .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'").append(jiraComponent).append(']')
-                                .append(" \\\\ ");
 
-                    StringBuilder devString = new StringBuilder();
-                    if (pluginJSON.has("developers")) {
-                        JSONArray devArray = pluginJSON.getJSONArray("developers");
-                        for (int i = 0; i < devArray.length(); i++) {
-                            String devName = getString(devArray.getJSONObject(i), "name");
-                            String devId = getString(devArray.getJSONObject(i), "developerId");
-                            String devEmail = getString(devArray.getJSONObject(i), "email");
+                    {// second row
+                        toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core | ").append(version)
+                                    .append(" \\\\ ").append(getString(pluginJSON, "buildDate")).append(version)
+                                    .append(" \\\\ ").append(getString(pluginJSON, "requiredCore"))
 
-                            if (devString.length()>0) {
-                                devString.append("\n");
+
+                                    .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
+                                    .append(isGithub ? "[GitHub|https://github.com/jenkinsci/" : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/").append(sourceDir).append(']')
+                                    .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'").append(jiraComponent).append(']')
+                                    .append(" \\\\ ");
+
+                        StringBuilder devString = new StringBuilder();
+                        if (pluginJSON.has("developers")) {
+                            JSONArray devArray = pluginJSON.getJSONArray("developers");
+                            for (int i = 0; i < devArray.length(); i++) {
+                                String devName = getString(devArray.getJSONObject(i), "name");
+                                String devId = getString(devArray.getJSONObject(i), "developerId");
+                                String devEmail = getString(devArray.getJSONObject(i), "email");
+
+                                if (devString.length()>0) {
+                                    devString.append("\n");
+                                }
+
+                                if (!devEmail.equals("n/a")) {
+                                    devString.append("[" + devName + "|mailto:" + devEmail + "]");
+                                }
+                                else {
+                                    devString.append(devName);
+                                }
+
+                                devString.append(" (id: " + devId + ")");
                             }
+                        }
 
-                            if (!devEmail.equals("n/a")) {
-                                devString.append("[" + devName + "|mailto:" + devEmail + "]");
-                            }
-                            else {
-                                devString.append(devName);
-                            }
+                        if (devString.length()==0) {
+                            devString.append("(not specified)");
+                        }
+                        toBeRendered.append(devString.toString());
+                        toBeRendered.append(" |\n ");
+                    }
 
-                            devString.append(" (id: " + devId + ")");
+                    {// third row
+                        if(statsParser != null) {
+                            toBeRendered.append(" || Installations | ");
+                            final SortedMap<Date, Integer> sortedSeries = statsParser.getSortedSeries();
+
+                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM");
+                            for (Entry<Date, Integer> serie : sortedSeries.entrySet()) {
+                                toBeRendered.append(df.format(serie.getKey())).append(' ').append(serie.getValue().toString()).append('\n');
+                            }
+                            toBeRendered.append(" || Usage | !").append(statsParser.renderChartUrl(true)).append("! |\n");
                         }
                     }
 
-                    if (devString.length()==0) {
-                        devString.append("(not specified)");
-                    }
-                    String chartUrl = statsParser == null ? "n/a" : statsParser.renderChartUrl(true);
-                    toBeRendered.append(devString.toString()).append(" || Usage | !").append(chartUrl).append("! | ");;
+
                     break;
                 }
             }
