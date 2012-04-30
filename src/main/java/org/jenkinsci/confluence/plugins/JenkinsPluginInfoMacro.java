@@ -233,7 +233,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
     private StatsInfoParser getStatsParser(RenderContext renderContext, String pluginId) {
         try {
-            HttpResponse statsResponse = httpRetrievalService.get("http://xxxxxxxx/stats/" + pluginId + ".stats.json");
+            HttpResponse statsResponse = httpRetrievalService.get("http://stats.jenkins-ci.org/plugin-installation-trend/" + pluginId + ".stats.json");
             if (statsResponse.getStatusCode() != 200) {
                 subRenderer.render("h4. Stats\n" + "{warning:title=Cannot load statistics}\n" + "error " + statsResponse.getStatusCode()
                         + " loading update-center.json\n" + "{warning}\n", renderContext);
