@@ -162,7 +162,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
                     {// second row
                         toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core | ").append(version)
-                                    .append(" \\\\ ").append(getString(pluginJSON, "buildDate")).append(version)
+                                    .append(" \\\\ ").append(getString(pluginJSON, "buildDate"))
                                     .append(" \\\\ ").append(getString(pluginJSON, "requiredCore"))
 
 
