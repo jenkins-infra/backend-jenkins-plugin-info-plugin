@@ -204,7 +204,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                         devString.append("(not specified)");
                     }
                     String chartUrl = statsParser == null ? "n/a" : statsParser.renderChartUrl(true);
-                    toBeRendered.append(devString.toString()).append(" || Usage | ").append(chartUrl).append(" | ");;
+                    toBeRendered.append(devString.toString()).append(" || Usage | !").append(chartUrl).append("! | ");;
                     break;
                 }
             }
