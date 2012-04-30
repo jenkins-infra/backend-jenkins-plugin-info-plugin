@@ -203,6 +203,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
                     {// third row
                         if(statsParser != null) {
+                            toBeRendered.append(" || Usage | !").append(statsParser.renderChartUrl(true)).append("!");
                             toBeRendered.append(" || Installations | ");
                             final SortedMap<Date, Integer> sortedSeries = statsParser.getSortedSeries();
 
@@ -210,7 +211,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                             for (Entry<Date, Integer> serie : sortedSeries.entrySet()) {
                                 toBeRendered.append(df.format(serie.getKey())).append(' ').append(serie.getValue().toString()).append('\n');
                             }
-                            toBeRendered.append(" || Usage | !").append(statsParser.renderChartUrl(true)).append("! |\n");
+                            toBeRendered.append("|\n");
                         }
                     }
 
