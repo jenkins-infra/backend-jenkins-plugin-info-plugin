@@ -211,6 +211,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                             for (Entry<Date, Integer> serie : sortedSeries.entrySet()) {
                                 toBeRendered.append(df.format(serie.getKey())).append(' ').append(serie.getValue().toString()).append('\n');
                             }
+                            toBeRendered.append("[(?)|Plugin Installation Statistics]");
                             toBeRendered.append("|\n");
                         }
                     }
