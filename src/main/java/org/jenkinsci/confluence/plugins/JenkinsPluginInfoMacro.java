@@ -168,7 +168,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
                                     .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
                                     .append(isGithub ? "[GitHub|https://github.com/jenkinsci/" : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/").append(sourceDir).append(']')
-                                    .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+'").append(jiraComponent).append("']")
+                                    .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+%27").append(jiraComponent).append("%27]")
                                     .append(" \\\\ ");
 
                         StringBuilder devString = new StringBuilder();
