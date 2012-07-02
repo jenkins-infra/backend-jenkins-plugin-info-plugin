@@ -161,9 +161,10 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
 
                     {// second row
-                        toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core | ").append(version)
+                        toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core \\\\ Dependencies | ").append(version)
                                     .append(" \\\\ ").append(getString(pluginJSON, "buildDate"))
                                     .append(" \\\\ ").append(getString(pluginJSON, "requiredCore"))
+                                    .append(" \\\\ ").append(getDependencies(updateCenter, pluginJSON))
 
 
                                     .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
@@ -241,6 +242,31 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                       + "IOException: " + e.getMessage() + "\n"
                                       + "{warning}\n", renderContext);
         }
+    }
+
+    private String getDependencies(JSONObject updateCenter, JSONObject pluginJSON) throws JSONException {
+        StringBuilder depString = new StringBuilder();
+        final JSONArray depArray = pluginJSON.getJSONArray("dependencies");
+        for (int i = 0; i < depArray.length(); i++) {
+            String depName = getString(depArray.getJSONObject(i), "name");
+            String depVersion = getString(depArray.getJSONObject(i), "version");
+            String depOptional = getString(depArray.getJSONObject(i), "optional");
+            String depWikiUrl = getWikiUrl(updateCenter, depName);
+
+            if (depWikiUrl.length() > 0) {
+                depString.append("[" + depName + "|" + depWikiUrl + "]");
+            } else {
+                depString.append(depName);
+            }
+
+            depString.append(" (version: " + depVersion + ", optional: " + depOptional + ")");
+        }
+        return depString.toString();
+    }
+    
+    private String getWikiUrl(JSONObject updateCenter, String pluginId) throws JSONException{
+        JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginId);
+        return pluginJSON == null ? "" : getString(pluginJSON, "wiki");
     }
 
     private StatsInfoParser getStatsParser(RenderContext renderContext, String pluginId) {
