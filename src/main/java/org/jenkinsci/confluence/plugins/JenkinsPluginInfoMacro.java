@@ -253,13 +253,19 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             String depOptional = getString(depArray.getJSONObject(i), "optional");
             String depWikiUrl = getWikiUrl(updateCenter, depName);
 
+            if (depString.length()>0)
+                depString.append(" \\\\ ");
+
             if (depWikiUrl.length() > 0) {
                 depString.append("[" + depName + "|" + depWikiUrl + "]");
             } else {
                 depString.append(depName);
             }
 
-            depString.append(" (version: " + depVersion + ", optional: " + depOptional + ")");
+            depString.append(" (version:" + depVersion);
+            if (Boolean.parseBoolean(depOptional))
+                depString.append(", optional");
+            depString.append(")");
         }
         return depString.toString();
     }
