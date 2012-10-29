@@ -161,10 +161,11 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     }
 
                     {// second row
+                        String requiredCore = getString(pluginJSON, "requiredCore");
                         toBeRendered.append(" || Latest Release \\\\ Latest Release Date \\\\ Required Core \\\\ Dependencies | ")
-                                    .append(version)
+                                    .href(version,"http://updates.jenkins-ci.org/latest/"+name+".hpi").append(" ").href("(archives)","http://updates.jenkins-ci.org/download/plugins/"+name+"/")
                                     .br().append(getString(pluginJSON, "buildDate"))
-                                    .br().append(getString(pluginJSON, "requiredCore"))
+                                    .br().href(requiredCore,"http://updates.jenkins-ci.org/download/war/"+requiredCore+"/jenkins.war")
                                     .br().append(getDependencies(updateCenter, pluginJSON))
 
 
@@ -192,7 +193,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                     devString.append(devName);
                                 }
 
-                                devString.print(" (id: %s)",devId);
+                                devString.print(" (id: %s)", devId);
                             }
                         }
 
@@ -255,10 +256,10 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             String depWikiUrl = getWikiUrl(updateCenter, depName);
 
             if (depString.length()>0)
-                depString.append(" \\\\ ");
+                depString.br();
 
             if (depWikiUrl.length() > 0) {
-                depString.href(depName,depWikiUrl);
+                depString.href(depName, depWikiUrl);
             } else {
                 depString.append(depName);
             }
