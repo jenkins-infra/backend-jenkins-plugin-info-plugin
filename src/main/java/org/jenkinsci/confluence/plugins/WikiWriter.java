@@ -37,6 +37,10 @@ public class WikiWriter {
         return this;
     }
 
+    WikiWriter br() {
+        return append(" \\\\ ");
+    }
+
     public String toString() {
         return buf.toString();
     }
