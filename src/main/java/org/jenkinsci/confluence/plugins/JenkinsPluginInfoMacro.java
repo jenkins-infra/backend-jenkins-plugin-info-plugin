@@ -111,7 +111,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
             JSONObject updateCenter = new JSONObject(rawUpdateCenter);
             
-            StringBuilder toBeRendered = null;
+            WikiWriter toBeRendered = null;
             for (String pluginKey : JSONObject.getNames(updateCenter.getJSONObject("plugins"))) {
                 if (pluginKey.equals(pluginId)) {
                     JSONObject pluginJSON = updateCenter.getJSONObject("plugins").getJSONObject(pluginKey);
@@ -137,7 +137,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     String githubBaseUrl = "https://github.com/jenkinsci/" + sourceDir + "/compare/" + name + "-";
                     String version = getString(pluginJSON, "version");
                     
-                    toBeRendered = new StringBuilder("h4. Plugin Information\n");
+                    toBeRendered = new WikiWriter().h4("Plugin Information");
 
                     {// first row
                         toBeRendered.append("|| Plugin ID | ")
@@ -172,7 +172,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                     .append(" \\\\ [Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+%27").append(jiraComponent).append("%27]")
                                     .append(" \\\\ ");
 
-                        StringBuilder devString = new StringBuilder();
+                        WikiWriter devString = new WikiWriter();
                         if (pluginJSON.has("developers")) {
                             JSONArray devArray = pluginJSON.getJSONArray("developers");
                             for (int i = 0; i < devArray.length(); i++) {
@@ -185,13 +185,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                 }
 
                                 if (!devEmail.equals("n/a")) {
-                                    devString.append("[" + devName + "|mailto:" + devEmail + "]");
+                                    devString.href(devName,"mailto:" + devEmail);
                                 }
                                 else {
                                     devString.append(devName);
                                 }
 
-                                devString.append(" (id: " + devId + ")");
+                                devString.print(" (id: %s)",devId);
                             }
                         }
 
@@ -204,7 +204,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
                     {// third row
                         if(statsParser != null) {
-                            toBeRendered.append(" || Usage | !").append(statsParser.renderChartUrl(true)).append("!");
+                            toBeRendered.append(" || Usage | ").image(statsParser.renderChartUrl(true));
                             toBeRendered.append(" || Installations | ");
                             final SortedMap<Date, Integer> sortedSeries = statsParser.getSortedSeries();
 
@@ -223,7 +223,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             }
 
             if (toBeRendered==null) {
-                toBeRendered = new StringBuilder("h4. Plugin Information\n");
+                toBeRendered = new WikiWriter().h4("Plugin Information");
                 toBeRendered.append("|| No Information For This Plugin ||\n");
             } 
             
@@ -245,7 +245,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
     }
 
     private String getDependencies(JSONObject updateCenter, JSONObject pluginJSON) throws JSONException {
-        StringBuilder depString = new StringBuilder();
+        WikiWriter depString = new WikiWriter();
         final JSONArray depArray = pluginJSON.getJSONArray("dependencies");
         for (int i = 0; i < depArray.length(); i++) {
             String depName = getString(depArray.getJSONObject(i), "name");
@@ -257,7 +257,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                 depString.append(" \\\\ ");
 
             if (depWikiUrl.length() > 0) {
-                depString.append("[" + depName + "|" + depWikiUrl + "]");
+                depString.href(depName,depWikiUrl);
             } else {
                 depString.append(depName);
             }
