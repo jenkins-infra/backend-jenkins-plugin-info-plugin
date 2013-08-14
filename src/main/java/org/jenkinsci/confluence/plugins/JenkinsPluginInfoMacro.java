@@ -13,6 +13,8 @@ import org.jenkinsci.confluence.plugins.exception.PluginHttpException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.atlassian.confluence.util.http.HttpRetrievalService;
 import com.atlassian.renderer.RenderContext;
@@ -22,6 +24,9 @@ import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
 
 public class JenkinsPluginInfoMacro extends BaseMacro {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(JenkinsPluginInfoMacro.class);
 
 	private HttpRetrievalService httpRetrievalService;
 
@@ -82,6 +87,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 	public String execute(Map parameters, String body,
 			RenderContext renderContext) throws MacroException {
 		String pluginId = (String) parameters.get("pluginId");
+		log.info("retrieving info for " + pluginId);
 		if (pluginId == null) {
 			pluginId = (String) parameters.get("0"); // Accept pluginId value
 														// without "pluginId="
@@ -131,7 +137,11 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 						+ "%20return%20csid,%20comment,%20author,%20path";
 				// JG amend this line to take a parameter instead of
 				// jenkinsci
-				String githubBaseUrl = "https://github.com/jenkinsci/"
+				String githubUser = (String) parameters.get("githubUser");
+				if (githubUser == null) {
+					githubUser = "jenkinsci";
+				}
+				String githubBaseUrl = "https://github.com/" + githubUser + "/"
 						+ sourceDir + "/compare/" + name + "-";
 				String version = getString(pluginJSON, "version");
 
@@ -186,7 +196,8 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
 							.append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
 							// JG this line too
-							.append(isGithub ? "[GitHub|https://github.com/jenkinsci/"
+							.append(isGithub ? "[GitHub|https://github.com/"
+									+ githubUser + "/"
 									: "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/")
 							.append(sourceDir)
 							.append(']')
