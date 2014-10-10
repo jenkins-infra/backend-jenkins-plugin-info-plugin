@@ -122,6 +122,9 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     if (jiraComponent == null) {
                         jiraComponent = name;
                     }
+                    if (!jiraComponent.endsWith("-plugin")) {
+                        jiraComponent += "-plugin";
+                    }
                     boolean isGithub = getString(pluginJSON, "scm").endsWith("github.com"); // Default to svn
                     if (sourceDir == null) {
                         sourceDir = name + (isGithub && !name.endsWith("-plugin") ? "-plugin" : "");
