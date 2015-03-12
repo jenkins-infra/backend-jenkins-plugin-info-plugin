@@ -24,7 +24,7 @@ public class StatsInfoParser {
     private static final int NUMBER_OF_MONTHS = 12;
 
     // https://developers.google.com/chart/image/docs/chart_params
-    private static final String QUERY_FORMAT = "" + // http://chart.apis.google.com/chart?
+    private static final String QUERY_FORMAT = "" + // https://chart.googleapis.com/chart?
             // chart type: line chart
             "cht=lc" +
             // Axis labels
@@ -134,7 +134,7 @@ public class StatsInfoParser {
         String url = new MessageFormat(QUERY_FORMAT).format(args);
         if (true) {
             try {
-                URI uri = new URI("http", "chart.apis.google.com", "/chart", url, null);
+                URI uri = new URI("https", "chart.googleapis.com", "/chart", url, null);
                 url = uri.toASCIIString();
             } catch (URISyntaxException e) {
                 url = null;
