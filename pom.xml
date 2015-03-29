@@ -1,33 +1,57 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>com.atlassian.confluence.plugin.base</groupId>
-    <artifactId>confluence-plugin-base</artifactId>
-    <version>27</version>
-  </parent>
-  
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jenkinsci.confluence.plugins</groupId>
-  <artifactId>jenkins-plugin-info-plugin</artifactId>
-  <version>1.8-SNAPSHOT</version>
-  
-  <name>Jenkins Plugin Info Macro Plugin</name>
-  <packaging>atlassian-plugin</packaging>
-  <url />
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+<?xml version="1.0" encoding="UTF-8"?>
 
-  <repositories>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jenkinsci.confluence.plugins</groupId>
+    <artifactId>jenkins-plugin-info-plugin</artifactId>
+    <version>1.8-SNAPSHOT</version>
+
+    <organization>
+        <name>Jenkins</name>
+        <url>http://www.jenkins-ci.org/</url>
+    </organization>
+
+    <name>Jenkins Plugin Info Macro Plugin</name>
+    <packaging>atlassian-plugin</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>confluence</artifactId>
+            <version>${confluence.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- WIRED TEST RUNNER DEPENDENCIES -->
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
+            <version>${plugin.testrunner.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2-atlassian-1</version>
+        </dependency>
+    </dependencies>
+
+  <!--repositories>
     <repository>
       <id>jboss</id>
       <name>jboss</name>
@@ -61,5 +85,35 @@
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories-->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-confluence-plugin</artifactId>
+                <version>${amps.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <productVersion>${confluence.version}</productVersion>
+                    <productDataVersion>${confluence.data.version}</productDataVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <confluence.version>4.3</confluence.version>
+        <confluence.data.version>4.3</confluence.data.version>
+        <amps.version>4.1</amps.version>
+        <plugin.testrunner.version>1.1</plugin.testrunner.version>
+    </properties>
+
 </project>

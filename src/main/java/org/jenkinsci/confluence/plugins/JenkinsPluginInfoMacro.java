@@ -160,6 +160,10 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                         .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
                                         .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
                         }
+                        if (isGithub) {
+                            String buildhiveUrl = "https://buildhive.cloudbees.com/job/jenkinsci/job/" + sourceDir;
+                            toBeRendered.append("[!").append(buildhiveUrl).append("/badge/icon|border=0!|").append(buildhiveUrl).append("/]");
+                        }
                         toBeRendered.append(" |\n ");
                     }
 
@@ -172,10 +176,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                     .br().append(getDependencies(updateCenter, pluginJSON))
 
 
-                                    .append(" || Source Code \\\\ Issue Tracking \\\\ Maintainer(s) | ")
+                                    .append(" || Source Code \\\\ Issue Tracking ").append(isGithub?"\\\\ Pull Requests ": "").append("\\\\ Maintainer(s) | ")
                                     .append(isGithub ? "[GitHub|https://github.com/jenkinsci/" : "[Subversion|https://svn.jenkins-ci.org/trunk/hudson/plugins/").append(sourceDir).append(']')
                                     .br().append("[Open Issues|http://issues.jenkins-ci.org/secure/IssueNavigator.jspa?mode=hide&reset=true&jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+AND+component+%3D+%27").append(jiraComponent).append("%27]")
                                     .br();
+                        if (isGithub) {
+                            toBeRendered.href("Pull Requests", "https://github.com/jenkinsci/"+sourceDir+"/pulls").br();
+                        }
 
                         WikiWriter devString = new WikiWriter();
                         if (pluginJSON.has("developers")) {
