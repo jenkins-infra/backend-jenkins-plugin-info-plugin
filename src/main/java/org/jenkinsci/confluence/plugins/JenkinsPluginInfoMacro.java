@@ -63,7 +63,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
     
     private String getString(JSONObject o, String prop) {
         if(o.containsKey(prop))
-            return (String)o.get(prop);
+            return o.get(prop).toString();
         else
             return "n/a";
     }
@@ -228,7 +228,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
         } catch (ParseException e) {
             return subRenderer.render("h4. Plugin Information\n"
                                       + "{warning:title=Cannot Load Update Center}\n"
-                                      + "IOException: " + e.getMessage() + "\n"
+                                      + "ParseException: " + e + "\n"
                                       + "{warning}\n", renderContext);
         }
     }
