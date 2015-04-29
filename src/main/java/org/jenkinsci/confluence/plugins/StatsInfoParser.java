@@ -1,6 +1,5 @@
 package org.jenkinsci.confluence.plugins;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
@@ -14,10 +13,12 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.atlassian.confluence.json.parser.JSONException;
-import com.atlassian.confluence.json.parser.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
 public class StatsInfoParser {
 
@@ -58,7 +59,7 @@ public class StatsInfoParser {
     private final String pluginName;
     private Integer maxNumber = 0;
 
-    public StatsInfoParser(String pluginName, String statsJson) throws JSONException {
+    public StatsInfoParser(String pluginName, String statsJson) throws ParseException {
         if (StringUtils.isBlank(statsJson)) {
             throw new IllegalArgumentException("json  must not be blank/null");
         }
@@ -73,17 +74,17 @@ public class StatsInfoParser {
      *            the json continaing the installation timeseries to be parsed
      * @throws JSONException
      */
-    private void init(String statsJson) throws JSONException {
-        JSONObject stats = new JSONObject(statsJson);
-        JSONObject timeseries = stats.optJSONObject("installations");
+    private void init(String statsJson) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject stats = (JSONObject) parser.parse(statsJson);
+        JSONObject timeseries = (JSONObject) stats.get("installations");
 
         SortedMap<Date, Integer> reverseSortedSeries = new TreeMap<Date, Integer>(Collections.reverseOrder());
 
         if (timeseries != null) {
-            for (Iterator<String> iterator = timeseries.keys(); iterator.hasNext();) {
-                final String monthStr = iterator.next();
+            for (String monthStr : (Iterable<String>) timeseries.keySet()) {
                 Date monthDate = new Date(Long.parseLong(monthStr));
-                reverseSortedSeries.put(monthDate, Integer.valueOf(timeseries.getString(monthStr)));
+                reverseSortedSeries.put(monthDate, ((Long) timeseries.get(monthStr)).intValue());
             }
         }
 
