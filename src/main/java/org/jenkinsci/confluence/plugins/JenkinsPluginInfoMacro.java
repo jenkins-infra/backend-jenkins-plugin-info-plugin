@@ -144,10 +144,12 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                     .append("]\n[Since Latest Release|").append(fisheyeBaseUrl)
                                     .append(releaseTimestamp).append(fisheyeEndUrl).append(']');
                     }
+                    /*
                     if (isGithub) {
                         String ciUrl = "https://jenkins.ci.cloudbees.com/job/plugins/job/" + sourceDir;
                         toBeRendered.append("[!").append(ciUrl).append("/badge/icon|border=0!|").append(ciUrl).append("/]");
                     }
+                    */
 
                     toBeRendered.append(" |\n ");
                 }
