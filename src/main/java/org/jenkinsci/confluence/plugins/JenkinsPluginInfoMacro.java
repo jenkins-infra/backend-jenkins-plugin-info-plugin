@@ -8,6 +8,9 @@ import java.util.SortedMap;
 import java.util.Map.Entry;
 
 import com.atlassian.renderer.RenderContext;
+import com.atlassian.confluence.renderer.PageContext;
+import com.atlassian.confluence.labels.Label;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.SubRenderer;
 import com.atlassian.renderer.v2.macro.BaseMacro;
@@ -222,6 +225,25 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                 toBeRendered = new WikiWriter().h4("Plugin Information");
                 toBeRendered.append("|| No Information For This Plugin ||\n");
             } 
+
+            if (renderContext instanceof PageContext) {
+                PageContext pc = (PageContext) renderContext;
+                ContentEntityObject entity = pc.getEntity();
+                for (Label label : entity.getLabels()) {
+                    if ("adopt-this-plugin".equals(label.getName())) {
+                        toBeRendered.append("\n\n{note}*This plugin is up for adoption.* ");
+
+                        String message = (String) parameters.get("adopt-message");
+                        if (message == null) {
+                            toBeRendered.append("Want to help improve this plugin?");
+                        } else {
+                            toBeRendered.append(message);
+                        }
+
+                        toBeRendered.append(" [Click here to learn more|Adopt a Plugin]!{note}");
+                    }
+                }
+            }
             
             return subRenderer.render(toBeRendered.toString(), renderContext);
         }
