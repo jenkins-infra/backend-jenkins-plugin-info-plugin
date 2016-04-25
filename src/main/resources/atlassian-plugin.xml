@@ -18,9 +18,9 @@
         <description>Old macro name for compatibility.</description>
     </macro>
 
-    <macro name="github-readme-content"
+    <macro name="github-markdown-content"
            class="org.jenkinsci.confluence.plugins.GithubMarkdownContentMacro"
-           key="github-readme-content">
-        <description>Renders content from a README.md file in the root of the given Github repository</description>
+           key="github-markdown-content">
+        <description>Renders content from a markdown file in the given Github repository</description>
     </macro>
 </atlassian-plugin>
