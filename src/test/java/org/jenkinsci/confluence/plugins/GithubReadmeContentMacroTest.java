@@ -103,9 +103,6 @@ public class GithubReadmeContentMacroTest {
         String output = macro.execute(inputMap, null, renderContext);
 
         String expected = loadTextFile("testRenderMarkdown.out");
-        if(System.getProperty("os.name").toLowerCase().contains("win")) {
-            expected = expected.replace("\r", "");
-        }
         assertEquals(expected.trim(), output.trim());
     }
 
