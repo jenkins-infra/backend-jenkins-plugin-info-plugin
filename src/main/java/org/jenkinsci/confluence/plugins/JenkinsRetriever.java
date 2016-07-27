@@ -17,7 +17,7 @@ public class JenkinsRetriever {
 			HttpRetrievalService httpRetrievalService) throws IOException,
 			PluginHttpException, ParseException {
 		HttpResponse response = httpRetrievalService
-				.get("http://updates.jenkins-ci.org/update-center.json");
+				.get("https://updates.jenkins-ci.org/update-center.json");
 		if (response.getStatusCode() != 200) {
 			throw new PluginHttpException(response.getStatusCode());
 		}
@@ -40,7 +40,7 @@ public class JenkinsRetriever {
 			HttpRetrievalService httpRetrievalService, String pluginId)
 			throws IOException, PluginHttpException {
 		HttpResponse statsResponse = httpRetrievalService
-				.get("http://stats.jenkins-ci.org/plugin-installation-trend/"
+				.get("http://stats.jenkins.io/plugin-installation-trend/"
 						+ pluginId + ".stats.json");
 		if (statsResponse.getStatusCode() != 200) {
 			throw new PluginHttpException(statsResponse.getStatusCode());
