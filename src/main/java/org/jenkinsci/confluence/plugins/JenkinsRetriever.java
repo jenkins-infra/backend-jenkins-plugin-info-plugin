@@ -17,7 +17,7 @@ public class JenkinsRetriever {
 			HttpRetrievalService httpRetrievalService) throws IOException,
 			PluginHttpException, ParseException {
 		HttpResponse response = httpRetrievalService
-				.get("https://updates.jenkins-ci.org/update-center.json");
+				.get("http://updates.jenkins-ci.org/update-center.json");
 		if (response.getStatusCode() != 200) {
 			throw new PluginHttpException(response.getStatusCode());
 		}
