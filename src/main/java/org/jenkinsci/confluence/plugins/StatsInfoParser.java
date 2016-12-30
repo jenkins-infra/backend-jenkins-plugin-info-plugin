@@ -45,7 +45,7 @@ public class StatsInfoParser {
             // y axis - data (number of installations)
             "&chd=t:{2}" +
             // grid lines
-            "&chg=10,-1,0,0" +
+            "&chg=9.09,-1,0,0" +
             // Line Style (thickness)
             "&chls=4" +
             // Line Color (series color) -> red line
