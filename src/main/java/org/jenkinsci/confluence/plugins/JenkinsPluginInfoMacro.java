@@ -3,9 +3,12 @@ package org.jenkinsci.confluence.plugins;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.atlassian.renderer.RenderContext;
 import com.atlassian.confluence.renderer.PageContext;
@@ -100,6 +103,42 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
             WikiWriter toBeRendered = null;
 
+            // warnings applicable to this plugin no matter what the release is
+            Set<JSONObject> pluginWarnings = new HashSet<JSONObject>();
+
+            // warnings applicable to the current version, which include warnings for all versions even if unpublished
+            Set<JSONObject> currentWarnings = new HashSet<JSONObject>();
+
+            JSONArray warnings = (JSONArray) updateCenter.get("warnings");
+            if (warnings != null) {
+                for (Object w : warnings) {
+                    JSONObject warning = (JSONObject) w;
+                    try {
+                        if (!"plugin".equals(warning.get("type"))) {
+                            // not a plugin warning
+                            continue;
+                        }
+                        if (!pluginId.equals(warning.get("name"))) {
+                            // not about this plugin
+                            continue;
+                        }
+
+                        pluginWarnings.add(warning);
+
+                        JSONArray warningVersions = (JSONArray) warning.get("versions");
+                        if (warningVersions == null) {
+                            warningVersions = new JSONArray();
+                        }
+                        if (isWarningRelevantForAnyVersion(warningVersions)) {
+                            currentWarnings.add(warning);
+                        }
+                    } catch (RuntimeException ex) {
+                        // ignore -- something wrong on the update site, better to not break the wiki page
+                    }
+                }
+            }
+
+
             if (plugins.containsKey(pluginId)) {
                 JSONObject pluginJSON = (JSONObject) plugins.get(pluginId);
                 final StatsInfoParser statsParser = getStatsParser(renderContext, pluginId);
@@ -126,6 +165,18 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                     + "%20return%20csid,%20comment,%20author,%20path";
                 String githubBaseUrl = "https://github.com/jenkinsci/" + sourceDir + "/compare/" + name + "-";
                 String version = getString(pluginJSON, "version");
+
+                // filter warnings by whether they apply to the distributed version
+
+                for (JSONObject warning : pluginWarnings) {
+                    JSONArray warningVersions = (JSONArray) warning.get("versions");
+                    if (warningVersions == null) {
+                        warningVersions = new JSONArray();
+                    }
+                    if (isWarningRelevantForSpecificVersion(version, warningVersions)) {
+                        pluginWarnings.add(warning);
+                    }
+                }
 
                 toBeRendered = new WikiWriter().h4("Plugin Information");
 
@@ -224,7 +275,16 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             if (toBeRendered==null) {
                 toBeRendered = new WikiWriter().h4("Plugin Information");
                 toBeRendered.append("|| No Information For This Plugin ||\n");
-            } 
+            }
+
+            if (!currentWarnings.isEmpty()) {
+                // there are warnings
+                toBeRendered.append("{warning}This plugin may not be safe to use. Please review the following warnings before use:");
+                for (JSONObject warning : currentWarnings) {
+                    toBeRendered.append(String.format("* [%s|%s]", warning.get("message"), warning.get("url")));
+                }
+                toBeRendered.append("{warning}");
+            }
 
             if (renderContext instanceof PageContext) {
                 PageContext pc = (PageContext) renderContext;
@@ -263,6 +323,31 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                                       + "ParseException: " + e + "\n"
                                       + "{warning}\n", renderContext);
         }
+    }
+
+    private boolean isWarningRelevantForAnyVersion(JSONArray versions) {
+        return versions == null || versions.size() == 0;
+    }
+
+    private boolean isWarningRelevantForSpecificVersion(String pluginVersion, JSONArray versions) {
+
+        if (isWarningRelevantForAnyVersion(versions)) {
+            return false;
+        }
+
+        for (Object v : versions) {
+            try {
+                JSONObject versionEntry = (JSONObject) v;
+                String patt = versionEntry.get("pattern").toString();
+                Pattern pattern = Pattern.compile(patt);
+                if (pattern.matcher(pluginVersion).matches()) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return false;
     }
 
     private String getDependencies(JSONObject updateCenter, JSONObject pluginJSON) {
