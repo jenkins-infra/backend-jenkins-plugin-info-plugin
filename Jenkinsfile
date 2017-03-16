@@ -21,6 +21,6 @@ node('linux') {
     }
 
     stage('Archive') {
-        archive 'target/jenkins-infra-plugin-*.jar'
+        archive 'target/jenkins-plugin-info-plugin-*.jar'
     }
 }
