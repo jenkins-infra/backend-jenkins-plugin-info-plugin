@@ -1,7 +1,7 @@
 #!groovy
 
 properties([
-        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '2')),
+        buildDiscarder(logRotator(numToKeepStr: '10')),
 ])
 
 node('linux') {
