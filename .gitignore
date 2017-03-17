@@ -2,3 +2,7 @@ target
 .settings
 .classpath
 .project
+
+# IntelliJ IDEA
+.idea/
+jenkins-plugin-info-plugin.iml
