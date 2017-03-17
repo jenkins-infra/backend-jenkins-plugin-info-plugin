@@ -3,7 +3,7 @@
     <plugin-info>
         <description>Jenkins Plugin Info Macro Plugin</description>
         <version>1.8</version>
-        <vendor name="Jenkins" url="http://jenkins-ci.org/"/>
+        <vendor name="Jenkins" url="http://jenkins.io/"/>
     </plugin-info>
 
     <macro name="jenkins-plugin-info"
@@ -16,5 +16,11 @@
            class="org.jenkinsci.confluence.plugins.JenkinsPluginInfoMacro"
            key="hudson-plugin-info">
         <description>Old macro name for compatibility.</description>
+    </macro>
+
+    <macro name="github-markdown-content"
+           class="org.jenkinsci.confluence.plugins.GithubMarkdownContentMacro"
+           key="github-markdown-content">
+        <description>Renders content from a markdown file in the given Github repository</description>
     </macro>
 </atlassian-plugin>

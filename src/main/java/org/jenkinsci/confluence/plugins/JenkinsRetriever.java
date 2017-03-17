@@ -1,6 +1,7 @@
 package org.jenkinsci.confluence.plugins;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.jenkinsci.confluence.plugins.exception.PluginHttpException;
@@ -47,5 +48,18 @@ public class JenkinsRetriever {
 		}
 		String rawStats = IOUtils.toString(statsResponse.getResponse()).trim();
 		return rawStats;
+	}
+
+	public String retrieveFile(
+			HttpRetrievalService httpRetrievalService,
+			String url)
+		throws IOException, PluginHttpException {
+
+		HttpResponse response = httpRetrievalService.get(url);
+		if(response.getStatusCode() != 200) {
+			throw new PluginHttpException(response.getStatusCode());
+		}
+
+		return IOUtils.toString(response.getResponse());
 	}
 }
