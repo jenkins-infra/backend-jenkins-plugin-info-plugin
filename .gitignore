@@ -5,4 +5,4 @@ target
 
 # IntelliJ IDEA
 .idea/
-jenkins-plugin-info-plugin.iml
+*.iml
