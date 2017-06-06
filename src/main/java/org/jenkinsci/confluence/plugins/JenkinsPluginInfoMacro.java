@@ -129,7 +129,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                         if (warningVersions == null) {
                             warningVersions = new JSONArray();
                         }
-                        if (isWarningRelevantForAnyVersion(warningVersions)) {
+                        if (isWarningRelevantForAnyVersion(warningVersions) || isWarningRelevantForSpecificVersion("ifThisMatchesAnythingDoes", warningVersions)) {
                             currentWarnings.add(warning);
                         }
                     } catch (RuntimeException ex) {
@@ -274,7 +274,11 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
 
             if (toBeRendered==null) {
                 toBeRendered = new WikiWriter().h4("Plugin Information");
-                toBeRendered.append("|| No Information For This Plugin ||\n");
+                if (currentWarnings.isEmpty()) {
+                    toBeRendered.append("|| No Information For This Plugin ||\n");
+                } else {
+                    toBeRendered.append("|| Distribution of This Plugin Has Been Suspended ||\n");
+                }
             }
 
             if (!currentWarnings.isEmpty()) {
