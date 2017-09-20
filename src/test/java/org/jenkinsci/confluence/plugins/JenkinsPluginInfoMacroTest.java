@@ -245,7 +245,7 @@ public class JenkinsPluginInfoMacroTest {
 		inputMap.put("pluginId", "does-not-exist");
 		RenderContext renderContext = new RenderContext();
 		String output = macro.execute(inputMap, null, renderContext);
-		String expectedOutput = "h4. Plugin Information\n|| No Information For This Plugin ||\n";
+		String expectedOutput = "|| No information for this plugin is available. It may have been removed from distribution. ||\n";
 		Assert.assertEquals(expectedOutput, output);
 	}
 

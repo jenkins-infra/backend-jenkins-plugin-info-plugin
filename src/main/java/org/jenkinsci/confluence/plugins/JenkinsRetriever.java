@@ -45,7 +45,6 @@ public class JenkinsRetriever {
 		if (statsResponse.getStatusCode() != 200) {
 			throw new PluginHttpException(statsResponse.getStatusCode());
 		}
-		String rawStats = IOUtils.toString(statsResponse.getResponse()).trim();
-		return rawStats;
+		return IOUtils.toString(statsResponse.getResponse()).trim();
 	}
 }
