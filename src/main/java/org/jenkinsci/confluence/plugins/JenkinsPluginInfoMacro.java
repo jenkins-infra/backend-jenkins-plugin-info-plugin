@@ -127,7 +127,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             if (plugins.containsKey(pluginId)) {
                 JSONObject pluginJSON = (JSONObject) plugins.get(pluginId);
 
-                String name = getString(pluginJSON, "name");
+                String title = getString(pluginJSON, "title");
 
                 String version = getString(pluginJSON, "version");
 
@@ -142,7 +142,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                         pluginWarnings.add(warning);
                     }
                 }
-                toBeRendered = new WikiWriter().append("|| View " + name + " [on the plugin site|https://plugins.jenkins.io/" + pluginId + "] for more information. ||\n");
+                toBeRendered = new WikiWriter().append("|| View " + title + " [on the plugin site|https://plugins.jenkins.io/" + pluginId + "] for more information. ||\n");
 
             }
 
