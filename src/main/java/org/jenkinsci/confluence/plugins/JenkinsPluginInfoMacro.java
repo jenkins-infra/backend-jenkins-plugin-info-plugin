@@ -149,7 +149,7 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
             if (toBeRendered==null) {
                 toBeRendered = new WikiWriter();
                 if (currentWarnings.isEmpty()) {
-                    toBeRendered.append("|| No information for this plugin is available. It may have been removed from distribution. ||\n");
+                    toBeRendered.append("|| No information for the plugin '" + pluginId + "' is available. It may have been removed from distribution. ||\n");
                 } else {
                     toBeRendered.append("|| Distribution of this plugin has been suspended due to unresolved security vulnerabilities, see below. ||\n");
                 }
