@@ -124,6 +124,8 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                 }
             }
 
+            toBeRendered = new WikiWriter().append("|| Plugin Information ||\n");
+
             if (plugins.containsKey(pluginId)) {
                 JSONObject pluginJSON = (JSONObject) plugins.get(pluginId);
 
@@ -142,16 +144,13 @@ public class JenkinsPluginInfoMacro extends BaseMacro {
                         pluginWarnings.add(warning);
                     }
                 }
-                toBeRendered = new WikiWriter().append("|| View " + title + " [on the plugin site|https://plugins.jenkins.io/" + pluginId + "] for more information. ||\n");
+                toBeRendered.append("| View " + title + " [on the plugin site|https://plugins.jenkins.io/" + pluginId + "] for more information. |\n");
 
-            }
-
-            if (toBeRendered==null) {
-                toBeRendered = new WikiWriter();
+            } else {
                 if (currentWarnings.isEmpty()) {
-                    toBeRendered.append("|| No information for the plugin '" + pluginId + "' is available. It may have been removed from distribution. ||\n");
+                    toBeRendered.append("| No information for the plugin '" + pluginId + "' is available. It may have been removed from distribution. |\n");
                 } else {
-                    toBeRendered.append("|| Distribution of this plugin has been suspended due to unresolved security vulnerabilities, see below. ||\n");
+                    toBeRendered.append("| Distribution of this plugin has been suspended due to unresolved security vulnerabilities, see below. |\n");
                 }
             }
 
