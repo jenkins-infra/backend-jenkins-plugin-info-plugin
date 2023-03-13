@@ -1,3 +1,5 @@
+⚠️ As the Jenkins wiki is readonly now this repository isn't used anymore.
+
 An Atlassian plugin that contains Confluence macros to generate the Jenkins Plugin information summary in the Jenkins Wiki.
 
 To develop the plugin:
